@@ -20,12 +20,19 @@ defmodule OAuth2.Request do
     headers = process_request_headers(headers, content_type)
     req_opts = Keyword.merge(client.request_opts, opts)
 
-    case :ibrowse.send_req(url, headers, method, body, req_opts) do
-      {:ok, status, headers, body} when is_binary(body) ->
-        process_body(status, headers, body)
+    case :ibrowse.send_req(to_charlist(url), headers, method, body, req_opts) do
+      {:ok, status, headers, body} ->
+        process_body(normalize_status(status), headers, to_string(body))
       {:error, reason} ->
         {:error, %Error{reason: reason}}
     end
+  end
+
+  defp normalize_status(status) do
+    status
+    |> to_string()
+    |> Integer.parse()
+    |> elem(0)
   end
 
   @doc """

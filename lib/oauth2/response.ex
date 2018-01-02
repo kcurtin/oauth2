@@ -40,7 +40,9 @@ defmodule OAuth2.Response do
   end
 
   defp process_headers(headers) do
-    Enum.map(headers, fn {k, v} -> {String.downcase(k), v} end)
+    Enum.map(headers, fn {k, v} ->
+      {String.downcase(to_string(k)), to_string(v)}
+    end)
   end
 
   defp decode_response_body("", _type), do: ""
