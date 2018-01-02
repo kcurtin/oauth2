@@ -20,11 +20,7 @@ defmodule OAuth2.Request do
     headers = process_request_headers(headers, content_type)
     req_opts = Keyword.merge(client.request_opts, opts)
 
-    case :hackney.request(method, url, headers, body, req_opts) do
-      {:ok, ref} when is_reference(ref) ->
-        {:ok, ref}
-      {:ok, status, headers, ref} when is_reference(ref) ->
-        process_body(status, headers, ref)
+    case :ibrowse.send_req(url, headers, method, body, req_opts) do
       {:ok, status, headers, body} when is_binary(body) ->
         process_body(status, headers, body)
       {:error, reason} ->
@@ -68,14 +64,6 @@ defmodule OAuth2.Request do
     end
   end
 
-  defp process_body(status, headers, ref) when is_reference(ref) do
-    case :hackney.body(ref) do
-      {:ok, body} ->
-        process_body(status, headers, body)
-      {:error, reason} ->
-        {:error, %Error{reason: reason}}
-    end
-  end
   defp process_body(status, headers, body) when is_binary(body) do
     resp = Response.new(status, headers, body)
     case status do

@@ -22,12 +22,12 @@ defmodule OAuth2.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :hackney],
+    [applications: [:logger, :ibrowse],
      env: [serializers: %{"application/json" => Poison}]]
   end
 
   defp deps do
-    [{:hackney, "~> 1.10"},
+    [{:ibrowse, "~> 4.4"},
 
      # Test dependencies
      {:poison, "~> 3.0", only: :test},
